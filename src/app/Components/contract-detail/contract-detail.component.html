@@ -1,0 +1,74 @@
+<div style="display: flex; width: 100%; flex-direction: column; justify-content: center; position: relative;">
+
+    <div style="position: relative; width: 100%;">
+
+        <pdf-viewer id="pdf" 
+            [src]="pdfSrc" 
+            [render-text]="false" 
+            [page]="currentPage"
+            [show-all]="false" 
+            [zoom]="0.75" 
+            (after-load-complete)="afterLoadComplete($event)" 
+            style="width: 100%; height: 100vh; overflow: hidden;">
+        </pdf-viewer>
+        <div class="signature-container" style="position: absolute; display: flex; justify-content: center; width: 100%; height: 100%; top: 0; left: 0;">
+            <div class="signature-page" style="position: relative; width: 100%; box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+                <div cdkDrag *ngFor="let signature of signatures; let i = index" class="signature rounded"
+                    [id]="i"
+                    [style.width.px]="signature.width" [style.height.px]="signature.height"
+                    (cdkDragMoved)="onDragMoved(i)">
+
+                    <div *ngIf="signature.page == currentPage" class="rounded signature-content" style="width: 100%; height: 100%;">
+                        
+                        <div [style.width.px]="signature.width" [style.height.px]="signature.height" *ngIf="signature.imageData">
+                            <img [style.height.px]="signature.height" style="width: 100%;" [src]="'data:image/png;base64,' + signature.imageData">
+                        </div>
+
+                        <div *ngIf="!signature.imageData">
+                            <span class="fw-bold ms-2" style="font-size: 2em;">{{ signature.name }}</span>
+                        </div>
+
+                        <div [id]="'resizeHandle' + i" class="resizeHandle rounded-0" cdkDrag (cdkDragMoved)="resizeSignature(i)">
+                            <span nz-icon nzType="drag" nzTheme="outline"></span>
+                        </div>
+
+                        <div class="d-flex text-end" style="position: absolute; top: 0; right: 0;">
+                            <button class="btn btn-secondary p-1" (click)="selectSignature(i)" style="margin-right: 5%;"> ✒️ </button>
+                            <button class="btn btn-danger p-1" (click)="removeSignature(i)"> ✖️ </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center w-100 pt-3 pb-3 shadow" style="position: fixed; bottom: 0; background-color: white; display: flex; margin-left: 350px;">
+
+        <button nz-button class="btn btn-secondary p-2" style="margin: 0 2%;" (click)="goToPrevPage()"
+            [disabled]="currentPage === 1">Trang trước</button>
+        <button nz-button class="btn btn-secondary p-2" style="margin: 0 2%;" (click)="goToNextPage()"
+            [disabled]="currentPage === totalPages">Trang sau</button>
+        <button nz-button class="btn btn-success p-2" style="margin: 0 2%;" (click)="addSignature()">Thêm chữ ký</button>
+
+        <button nz-button class="btn btn-warning p-2" style="margin: 0 2%;" (click)="saveSignatures()">Lưu chữ ký</button>
+
+        <button nz-button class="btn btn-primary p-2" style="margin: 0 2%;" (click)="sign()">Ký</button>
+        <button nz-button class="btn btn-primary p-2" style="margin: 0 2%;" (click)="showOcrSection = true" >Thêm vùng OCR</button>
+        <button nz-button class="btn btn-primary p-2" style="margin: 0 2%;" >OCR</button>
+    </div>
+</div>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Sửa chữ ký" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <nz-form-label>Tên: </nz-form-label>
+        <input nz-input type="text" class="form-control" [(ngModel)]="selectedSignature.name">
+
+        <nz-form-label>Lý do: </nz-form-label>
+        <input nz-input type="text" class="form-control" [(ngModel)]="selectedSignature.reason">
+
+        <nz-form-label>Ảnh: </nz-form-label>
+        <input nz-input type="file" class="form-control" (change)="changeImage($event)" accept="image/*">
+        <img class="mt-2 rounded" style="aspect-ratio: 16/9; width: 100%; object-fit: cover;" *ngIf="selectedSignature.imageData" [src]="'data:image/png;base64,' + selectedSignature.imageData">
+    </ng-container>
+  </nz-modal>

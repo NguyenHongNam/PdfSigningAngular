@@ -1,0 +1,96 @@
+<nz-layout class="app-layout">
+  <nz-sider class="menu-sidebar"
+            nzCollapsible
+            nzWidth="256px"
+            nzBreakpoint="md"
+            [(nzCollapsed)]="isCollapsed"
+            [nzTrigger]="null">
+    <div class="sidebar-logo">
+      <a href="https://ng.ant.design/" target="_blank">
+        <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo">
+        <h1>Ant Design Of Angular</h1>
+      </a>
+    </div>
+    <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/contract-list">Danh sách hợp đồng</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink=" ">Example</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a>Workplace</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzOpen nzTitle="Form" nzIcon="form">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a>Basic Form</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <div class="app-header">
+        <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+            <span class="trigger"
+               nz-icon
+               [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+            ></span>
+        </span>
+      </div>
+    </nz-header>
+    <nz-content>
+      <div class="inner-content">
+        <nz-upload
+      nzAction="https://localhost:7277/Contract/upload"
+      [nzHeaders]="{ authorization: 'authorization-text' }"
+      (nzChange)="handleChange($event)"
+    >
+      <button nz-button>
+        <span nz-icon nzType="upload"></span>
+        Thêm file
+      </button>
+</nz-upload>
+<nz-table #headerTable [nzData]="contracts" [nzPageSize]="5" [nzScroll]="{ y: '350px' }">
+  <thead>
+    <tr>
+      <th>Stt</th>
+      <th>Tiêu đề</th>
+      <th>Ngày tạo</th>
+      <th>Trạng thái</th>
+      <th>Thao tác</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let lContract of contracts">
+      <td>{{ lContract.id }}</td>
+      <td>{{ lContract.title }}</td>
+      <td>{{ lContract.createdAt | date:'dd/MM/yyyy'}}</td>
+      <td>{{ lContract.isSigned ? 'Đã ký' : 'Chưa ký' }}</td>
+      <td>
+        <button nz-button nzType="primary" [nzSize]="size">
+          <span nz-icon nzType="form" nzTheme="outline" (click)="previewContract(lContract.id)">
+            Xem chi tiết</span>
+        </button>
+        <button nz-button nzType="primary" [nzSize]="size" (click)="downloadContract(lContract.id)">
+          <span nz-icon nzType="download"></span>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+      </div>
+    </nz-content>
+    <nz-footer style="text-align: center;">Design by Nam Nguyen</nz-footer>
+  </nz-layout>
+</nz-layout>
+
+
+
+

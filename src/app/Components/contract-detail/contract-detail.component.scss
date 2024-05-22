@@ -1,0 +1,37 @@
+.page {
+    padding-bottom: 0 !important;
+}
+
+.signature-container {
+    overflow: hidden;
+}
+
+.signature-page {
+    overflow: hidden;
+}
+
+.signature {
+    position: absolute;
+    cursor: move;
+}
+
+.signature-content {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.092);
+    border: 2px black dotted;
+}
+
+.signature-content span {
+    font-size: 1rem;
+}
+
+.resizeHandle {
+    position: absolute; 
+    bottom: -0.5rem;
+    right: -0.5rem;
+    aspect-ratio: 1;
+    width: 1.5rem;
+    cursor: pointer;
+}
